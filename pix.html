@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco PIX</title>
+</head>
+<body>
+
+<h1>Transferência Bancária</h1>
+
+<h2>Adicionar Contas</h2>
+<label for="documento">Número de Documento (CPF):</label>
+<input type="text" id="documento">
+<label for="nome">Nome:</label>
+<input type="text" id="nome">
+<label for="saldo">Saldo:</label>
+<input type="number" id="saldo">
+<button onclick="criarConta()">Adicionar Conta</button>
+
+<hr>
+
+<h2>Realizar Transferência</h2>
+<label for="contaOrigem">Conta de Origem (CPF):</label>
+<input type="text" id="contaOrigem">
+<label for="contaDestino">Conta de Destino (CPF):</label>
+<input type="text" id="contaDestino">
+<label for="valor">Valor:</label>
+<input type="number" id="valor">
+<button onclick="transferir()">Transferir</button>
+
+<hr>
+
+<h2>Extrato</h2>
+<hr>
+<p>Conta de Origem (CPF): <span id="cpfOrig"></span></p>
+<p>Nome:<span id="nomeOrig"></span></p>
+<p>Saldo anterior:<span id="saldoAnteriorOrig"></span></p>
+<p>Valor transferido:<span id="valorTransferido"></span></p>
+<p>Saldo atual:<span id="saldoAtualOrig"></span></p>
+<hr>
+<p>Conta de Destino (CPF): <span id="cpfDest"></span></p>
+<p>Nome:<span id="nomeDest"></span></p>
+<p>Saldo anterior:<span id="saldoAnteriorDest"></span></p>
+<p>Valor recebido:<span id="valorTransferido"></span></p>
+<p>Saldo atual:<span id="SaldoAtualDest"></span></p>
+<hr>
+
+<script>
+  let contas = [];
+
+  function limparCampos() {
+    document.getElementById('documento').value = '';
+    document.getElementById('nome').value = '';
+    document.getElementById('saldo').value = '';
+  }
+
+  function criarConta() {
+    const documento = document.getElementById('documento').value;
+    const nome = document.getElementById('nome').value;
+    const saldo = parseFloat(document.getElementById('saldo').value);
+
+    const contaExistente = contas.find(conta => conta.documento === documento);
+    if (contaExistente) {
+      alert('Essa conta já está cadastrada!');
+      return;
+    }
+
+    const novaConta = {
+      documento: documento,
+      nome: nome,
+      saldo: saldo
+    };
+
+    contas.push(novaConta);
+    console.log('Conta cadastrada:', novaConta);
+    alert('Parabéns! Conta cadastrada! \n' + 'CPF: ' + documento + '\nNome: ' + nome + '\nSaldo: ' + saldo);
+
+    limparCampos();
+  }
+
+  function transferir() {
+    const contaOrigem = document.getElementById('contaOrigem').value;
+    const contaDestino = document.getElementById('contaDestino').value;
+    const valor = parseFloat(document.getElementById('valor').value);
+
+    const origem = contas.find(conta => conta.documento === contaOrigem);
+    const destino = contas.find(conta => conta.documento === contaDestino);
+
+    if (!origem || !destino) {
+      alert('Conta de origem ou destino não encontrada!');
+      return;
+    }
+
+    if (origem.saldo < valor) {
+      alert('Saldo insuficiente para realizar a transferência!');
+      return;
+    }
+
+    origem.saldo -= valor;
+    destino.saldo += valor;
+
+    document.getElementById("cpfOrig").innerHTML = contaOrigem;
+    document.getElementById("nomeOrig").innerHTML = origem.nome;
+    document.getElementById("saldoAnteriorOrig").innerHTML =  origem.saldo + valor;
+    document.getElementById("valorTransferido").innerHTML = valor;
+    document.getElementById("saldoAtualOrig").innerHTML = origem.saldo ;
+
+    document.getElementById("cpfDest").innerHTML = contaDestino;
+    document.getElementById("nomeDest").innerHTML = destino.nome;
+    document.getElementById("saldoAnteriorDest").innerHTML = destino.saldo - valor;
+    document.getElementById("SaldoAtualDest").innerHTML = destino.saldo;
+
+    console.log('Transferência realizada!');
+    console.log('Conta de origem:', origem);
+    console.log('Conta de destino:', destino);
+  }
+</script>
+
+</body>
+</html>
